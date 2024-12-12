@@ -64,6 +64,13 @@ def vectorize_text(text, model, embedding_dim=100):
 st.title("Spam or Ham Classifier")
 st.write("Enter a message below, and the model will predict whether it's **Spam** or **Ham**.")
 
+# Display example spam messages
+st.subheader("Example Spam Messages")
+st.markdown("""
+- **Win a free vacation! Reply 'WIN' to 88888 to enter our exclusive draw.**
+- **Free entry in a $10,000 cash prize draw! Just text 'WIN' to 54321 now!**
+""")
+
 # User Input
 user_input = st.text_area("Type your message here:", "")
 
