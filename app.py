@@ -30,12 +30,12 @@ def get_wordnet_pos(word):
     return tag_dict.get(tag, wordnet.NOUN)  # Default to NOUN
 
 # Load the saved Random Forest model
-model_filename = "RAF_Classifier.pkl"
+model_filename = "./RAF_Classifier.pkl"
 with open(model_filename, "rb") as file:
     loaded_model = pickle.load(file)
 
 # Load the Word2Vec model
-w2v_filename = "w2v_model.pkl"
+w2v_filename = "./w2v_model.pkl"
 with open(w2v_filename, "rb") as file:
     w2v_model = pickle.load(file)
 
