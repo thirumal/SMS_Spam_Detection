@@ -1,8 +1,8 @@
 nltk
-scikit-learn
 numpy
 pandas
 gensim
-xgboost
 imbalanced-learn
 streamlit
+scikit-learn
+xgboost

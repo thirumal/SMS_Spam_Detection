@@ -1,58 +1,42 @@
+# streamlit_app.py
 import streamlit as st
-import numpy as np
-import re
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import sent_tokenize
-from gensim.utils import simple_preprocess
 import pickle
-from xgboost import XGBClassifier
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
 
-# Load the trained XGBoost model and Word2Vec model
-xgb_model = XGBClassifier()
-xgb_model.load_model("xgboost_model.json")  # Save your model in the script using .save_model()
+# Load the saved Random Forest model
+model_filename = "RAF_Classifier.pkl"
+with open(model_filename, "rb") as file:
+    loaded_model = pickle.load(file)
 
-with open("word2vec_model.pkl", "rb") as file:
-    word2vec_model = pickle.load(file)
+# Load the vectorizer used during training
+vectorizer_filename = "w2v_model.pkl"  # Save your vectorizer when training the model
+with open(vectorizer_filename, "rb") as file:
+    vectorizer = pickle.load(file)
 
-# Initialize lemmatizer
-lemma = WordNetLemmatizer()
+# Streamlit App
+st.title("Spam or Ham Classifier")
+st.write("Enter a message below, and the model will predict whether it's **Spam** or **Ham**.")
 
-# Preprocessing function
-def preprocess_text(text):
-    # Remove non-alphabetic characters
-    review = re.sub('[^a-zA-Z]', ' ', text)
-    review = review.lower()  # Convert to lowercase
-    review = review.split()  # Split into words
-    review = [lemma.lemmatize(word) for word in review]  # Lemmatize
-    return ' '.join(review)
+# User Input
+user_input = st.text_area("Type your message here:", "")
 
-# Average Word2Vec embedding
-def avg_word2vec(doc):
-    words = simple_preprocess(doc)
-    word_vectors = [word2vec_model.wv[word] for word in words if word in word2vec_model.wv.index_to_key]
-    if len(word_vectors) == 0:  # Handle empty documents
-        return np.zeros(100)
-    return np.mean(word_vectors, axis=0)
+if st.button("Classify"):
+    if user_input.strip():
+        # Preprocess the input text
+        input_data = vectorizer.transform([user_input])  # Vectorize the input text
 
-# Streamlit UI
-st.title("Spam Classification App")
-
-st.write("This app predicts whether a given message is spam or not using an XGBoost model.")
-
-# Input from the user
-input_text = st.text_area("Enter the text you want to classify:")
-
-if st.button("Predict"):
-    if input_text.strip():
-        # Preprocess and vectorize the input
-        processed_text = preprocess_text(input_text)
-        feature_vector = avg_word2vec(processed_text).reshape(1, -1)  # Reshape for prediction
-
-        # Predict
-        prediction = xgb_model.predict(feature_vector)[0]
-        prediction_label = "Spam" if prediction == 1 else "Not Spam"
+        # Predict using the loaded model
+        prediction = loaded_model.predict(input_data)
 
         # Display result
-        st.success(f"The message is classified as: {prediction_label}")
+        if prediction[0] == 1:  # Assuming 1 represents spam
+            st.error("The message is classified as **Spam**.")
+        else:  # Assuming 0 represents ham
+            st.success("The message is classified as **Ham**.")
     else:
-        st.warning("Please enter some text to classify.")
+        st.warning("Please enter a valid message.")
+
+# Footer
+st.write("---")
+st.write("Created with ❤️ by Thirumal Reddy")
