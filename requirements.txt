@@ -6,3 +6,4 @@ imbalanced-learn
 streamlit
 scikit-learn
 xgboost
+scipy 
