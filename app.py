@@ -1,4 +1,5 @@
 # streamlit_app.py
+import gensim
 import streamlit as st
 import re
 import pickle
