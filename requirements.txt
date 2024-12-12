@@ -6,4 +6,4 @@ imbalanced-learn
 streamlit
 scikit-learn
 xgboost
-scipy 
+scipy==1.9.1 
